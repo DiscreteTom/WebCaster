@@ -5,9 +5,9 @@
       <button @click="cast">Cast Screen</button>
     </div>
     <video
+      style="width: 100%; height: 100%; object-fit: fill"
       v-else-if="role == 'viewer'"
       ref="video"
-      width="1000"
       autoplay
       controls
     ></video>
