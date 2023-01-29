@@ -1,9 +1,17 @@
 <template>
   <main>
-    <button @click="register">Register Viewer</button>
-    <button @click="connect">Call with Screen</button>
-
-    <video ref="video" width="1000" autoplay controls></video>
+    <div v-if="role == 'unknown'">
+      <button @click="register">Register as Viewer</button>
+      <button @click="cast">Cast Screen</button>
+    </div>
+    <video
+      v-else-if="role == 'viewer'"
+      ref="video"
+      width="1000"
+      autoplay
+      controls
+    ></video>
+    <p v-else>Casting</p>
   </main>
 </template>
 
@@ -11,10 +19,14 @@
 import { Peer } from "peerjs";
 import { ref } from "vue";
 
+const viewerName = ref("viewer");
+const role = ref<"unknown" | "viewer" | "caster">("unknown");
 const video = ref<HTMLVideoElement>();
 
 function register() {
-  const peer = new Peer("viewer", {
+  role.value = "viewer";
+
+  const peer = new Peer(viewerName.value, {
     host: window.location.hostname,
     port: 9000,
     path: "/",
@@ -27,7 +39,9 @@ function register() {
   });
 }
 
-function connect() {
+function cast() {
+  role.value = "caster";
+
   const peer = new Peer("screen", {
     host: window.location.hostname,
     port: 9000,
