@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { Peer } from "peerjs";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const viewerName = ref("viewer");
 const port = ref(9000);
@@ -66,4 +66,26 @@ function cast() {
     peer.call(viewerName.value, stream);
   });
 }
+
+onMounted(() => {
+  // parse url params
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has("viewer-name")) {
+    viewerName.value = urlParams.get("viewer-name")!;
+  }
+  if (urlParams.has("port")) {
+    port.value = parseInt(urlParams.get("port")!);
+  }
+  if (urlParams.has("path")) {
+    path.value = urlParams.get("path")!;
+  }
+  if (urlParams.has("role")) {
+    const s = urlParams.get("role");
+    if (s == "viewer") {
+      register();
+    } else if (s == "caster") {
+      cast();
+    }
+  }
+});
 </script>
