@@ -1,4 +1,6 @@
 <template>
+  <p v-if="errMsg" style="color: red">{{ errMsg }}</p>
+
   <main>
     <div v-if="role == 'unknown'">
       <p>
@@ -37,6 +39,7 @@ const path = ref("/");
 
 const role = ref<"unknown" | "viewer" | "caster">("unknown");
 const video = ref<HTMLVideoElement>();
+const errMsg = ref("");
 
 function register() {
   role.value = "viewer";
@@ -52,6 +55,10 @@ function register() {
       video.value!.srcObject = stream;
     });
   });
+  peer.on("error", (err) => {
+    console.error(err);
+    errMsg.value = err.message;
+  });
 }
 
 function cast() {
@@ -61,6 +68,10 @@ function cast() {
     host: window.location.hostname,
     port: port.value,
     path: path.value,
+  });
+  peer.on("error", (err) => {
+    console.error(err);
+    errMsg.value = err.message;
   });
   navigator.mediaDevices.getDisplayMedia().then((stream) => {
     peer.call(viewerName.value, stream);
