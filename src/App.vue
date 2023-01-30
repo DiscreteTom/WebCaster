@@ -8,6 +8,10 @@
         <input v-model="viewerName" />
       </p>
       <p>
+        Peer Server Host:
+        <input v-model="host" />
+      </p>
+      <p>
         Peer Server Port:
         <input type="number" v-model="port" />
       </p>
@@ -34,6 +38,7 @@ import { Peer } from "peerjs";
 import { onMounted, ref } from "vue";
 
 const viewerName = ref("viewer");
+const host = ref(window.location.hostname);
 const port = ref(9000);
 const path = ref("/");
 
@@ -45,7 +50,7 @@ function register() {
   role.value = "viewer";
 
   const peer = new Peer(viewerName.value, {
-    host: window.location.hostname,
+    host: host.value,
     port: port.value,
     path: path.value,
   });
@@ -65,7 +70,7 @@ function cast() {
   role.value = "caster";
 
   const peer = new Peer({
-    host: window.location.hostname,
+    host: host.value,
     port: port.value,
     path: path.value,
   });
@@ -83,6 +88,9 @@ onMounted(() => {
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has("viewer-name")) {
     viewerName.value = urlParams.get("viewer-name")!;
+  }
+  if (urlParams.has("host")) {
+    host.value = urlParams.get("host")!;
   }
   if (urlParams.has("port")) {
     port.value = parseInt(urlParams.get("port")!);
