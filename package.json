@@ -6,7 +6,8 @@
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit"
+    "type-check": "vue-tsc --noEmit",
+    "start": "http-server ./dist"
   },
   "dependencies": {
     "peerjs": "^1.4.7",
