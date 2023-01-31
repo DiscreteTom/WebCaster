@@ -19,16 +19,22 @@
         Peer Server Path:
         <input v-model="path" />
       </p>
+      <p>
+        View with WebXR:
+        <input type="checkbox" v-model="xr" />
+      </p>
       <button @click="register">Register as Viewer</button>
       <button @click="cast">Cast Screen</button>
     </div>
-    <video
-      style="width: 100%; height: 100%; object-fit: fill"
-      v-else-if="role == 'viewer'"
-      ref="video"
-      autoplay
-      controls
-    ></video>
+    <div v-else-if="role == 'viewer'">
+      <video
+        style="width: 100%; height: 100%; object-fit: fill"
+        v-show="xr == false"
+        ref="video"
+        autoplay
+        controls
+      ></video>
+    </div>
     <p v-else>Casting</p>
   </main>
 </template>
@@ -36,11 +42,13 @@
 <script setup lang="ts">
 import { Peer } from "peerjs";
 import { onMounted, ref } from "vue";
+import { initScene, addVideo } from "./xrtc";
 
 const viewerName = ref("viewer");
 const host = ref(window.location.hostname);
 const port = ref(9000);
 const path = ref("/");
+const xr = ref(false);
 
 const role = ref<"unknown" | "viewer" | "caster">("unknown");
 const video = ref<HTMLVideoElement>();
@@ -48,6 +56,8 @@ const errMsg = ref("");
 
 function register() {
   role.value = "viewer";
+
+  if (xr.value) initScene();
 
   const peer = new Peer(viewerName.value, {
     host: host.value,
@@ -58,6 +68,7 @@ function register() {
     call.answer();
     call.on("stream", (stream) => {
       video.value!.srcObject = stream;
+      if (xr.value) addVideo(video.value!);
     });
   });
   peer.on("error", (err) => {
