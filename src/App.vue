@@ -45,7 +45,7 @@ import { onMounted, ref } from "vue";
 import { initScene, addVideo } from "./xrtc";
 
 const viewerName = ref("viewer");
-const host = ref(window.location.hostname);
+const host = ref("localhost");
 const port = ref(9000);
 const path = ref("/");
 const xr = ref(false);
