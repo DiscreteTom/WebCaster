@@ -74,7 +74,7 @@ export async function addVideo(video: HTMLVideoElement) {
     const maxX = screens
       .map((s) => {
         s.geometry.computeBoundingBox();
-        return s.geometry.boundingBox!.max.x;
+        return s.geometry.boundingBox!.max.x + s.position.x;
       })
       .sort()[screens.length - 1];
     screen.position.set(screenWidth / 2 + maxX, screenHeight / 2, -3);
