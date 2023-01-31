@@ -109,6 +109,9 @@ onMounted(() => {
   if (urlParams.has("path")) {
     path.value = urlParams.get("path")!;
   }
+  if (urlParams.has("xr")) {
+    xr.value = urlParams.get("xr") == "true";
+  }
   if (urlParams.has("role")) {
     const s = urlParams.get("role");
     if (s == "viewer") {
