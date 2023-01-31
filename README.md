@@ -1,5 +1,7 @@
 # WebCaster
 
+A simplest but powerful demo using peerjs(WebRTC).
+
 Cast your PC screen to any browser.
 
 ## Getting Started
