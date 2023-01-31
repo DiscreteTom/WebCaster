@@ -2,7 +2,7 @@
   <p v-if="errMsg" style="color: red">{{ errMsg }}</p>
 
   <main>
-    <div v-if="role == 'unknown'">
+    <div v-if="role == 'unknown'" style="margin: 20px">
       <p>
         Viewer Name:
         <input v-model="viewerName" />
@@ -24,7 +24,9 @@
         <input type="checkbox" v-model="xr" />
       </p>
       <button @click="register">Register as Viewer</button>
-      <button @click="cast">Cast Screen</button>
+      <button @click="cast" style="margin-left: 20px">
+        Cast Screen to Viewer
+      </button>
     </div>
     <div v-else-if="role == 'viewer'">
       <video
