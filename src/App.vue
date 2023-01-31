@@ -2,7 +2,7 @@
   <p v-if="errMsg" style="color: red">{{ errMsg }}</p>
 
   <main>
-    <div v-if="role == 'unknown'" style="margin: 20px">
+    <div v-show="role == 'unknown'" style="margin: 20px">
       <p>
         Viewer Name:
         <input v-model="viewerName" />
@@ -28,16 +28,19 @@
         Cast Screen to Viewer
       </button>
     </div>
-    <div v-else-if="role == 'viewer'">
-      <video
-        style="width: 100%; height: 100%; object-fit: fill"
-        v-show="xr == false"
-        ref="video"
-        autoplay
-        controls
-      ></video>
+
+    <div v-show="role == 'viewer'">
+      <div ref="videos" v-show="xr === false">
+        <!-- place holder video -->
+        <video
+          v-if="streams.length === 0"
+          style="width: 100%; height: 100%; object-fit: fill"
+          controls
+        ></video>
+      </div>
     </div>
-    <p v-else>Casting</p>
+
+    <p v-show="role == 'caster'">Casting</p>
   </main>
 </template>
 
@@ -53,7 +56,8 @@ const path = ref("/");
 const xr = ref(false);
 
 const role = ref<"unknown" | "viewer" | "caster">("unknown");
-const video = ref<HTMLVideoElement>();
+const streams = ref<MediaStream[]>([]);
+const videos = ref<HTMLDivElement>();
 const errMsg = ref("");
 
 function register() {
@@ -69,8 +73,17 @@ function register() {
   peer.on("call", (call) => {
     call.answer();
     call.on("stream", (stream) => {
-      video.value!.srcObject = stream;
-      if (xr.value) addVideo(video.value!);
+      streams.value.push(stream);
+      const video = document.createElement("video");
+      video.srcObject = stream;
+      video.autoplay = true;
+      video.controls = true;
+      video.style.width = "100%";
+      video.style.height = "100%";
+      video.style.objectFit = "fill";
+      videos.value!.appendChild(video);
+
+      if (xr.value) addVideo(video);
     });
   });
   peer.on("error", (err) => {
