@@ -2,7 +2,7 @@
   <p v-if="errMsg" style="color: red">{{ errMsg }}</p>
 
   <main>
-    <div v-show="role == 'unknown'" style="margin: 20px">
+    <div v-show="role == 'unknown' || role == 'caster'" style="margin: 20px">
       <p>
         Viewer Name:
         <input v-model="viewerName" />
@@ -21,7 +21,7 @@
       </p>
       <p>
         View with WebXR:
-        <input type="checkbox" v-model="xr" />
+        <input type="checkbox" v-model="xr" :disabled="role == 'caster'" />
       </p>
       <button @click="register">Register as Viewer</button>
       <button @click="cast" style="margin-left: 20px">
@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <p v-show="role == 'caster'">Casting</p>
+    <p v-if="casting">Casting: {{ casting }} stream(s).</p>
   </main>
 </template>
 
@@ -59,6 +59,7 @@ const role = ref<"unknown" | "viewer" | "caster">("unknown");
 const streams = ref<MediaStream[]>([]);
 const videos = ref<HTMLDivElement>();
 const errMsg = ref("");
+const casting = ref(0);
 
 function register() {
   role.value = "viewer";
@@ -106,6 +107,7 @@ function cast() {
   });
   navigator.mediaDevices.getDisplayMedia().then((stream) => {
     peer.call(viewerName.value, stream);
+    casting.value++;
   });
 }
 
