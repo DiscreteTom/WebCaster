@@ -1,8 +1,12 @@
 import * as three from "three";
 import { VRButton } from "three/examples/jsm/webxr/VRButton.js";
 
-// Make a new scene
 const scene = new three.Scene();
+const screens: three.Mesh<
+  three.BoxGeometry,
+  (three.MeshBasicMaterial | three.MeshNormalMaterial)[]
+>[] = [];
+
 export function initScene() {
   // Make a camera. note that far is set to 100, which is better for real-world sized environments
   const camera = new three.PerspectiveCamera(
@@ -64,6 +68,17 @@ export async function addVideo(video: HTMLVideoElement) {
     new three.BoxGeometry(screenWidth, screenHeight, 1),
     [otherMat, otherMat, otherMat, otherMat, videoMaterial, otherMat]
   );
-  screen.position.set(0, screenHeight / 2, -3);
+  if (screens.length === 0) {
+    screen.position.set(0, screenHeight / 2, -3);
+  } else {
+    const maxX = screens
+      .map((s) => {
+        s.geometry.computeBoundingBox();
+        return s.geometry.boundingBox!.max.x;
+      })
+      .sort()[screens.length - 1];
+    screen.position.set(screenWidth / 2 + maxX, screenHeight / 2, -3);
+  }
   scene.add(screen);
+  screens.push(screen);
 }
