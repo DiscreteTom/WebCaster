@@ -23,6 +23,14 @@
         View with WebXR:
         <input type="checkbox" v-model="xr" :disabled="role == 'caster'" />
       </p>
+      <p>
+        Show Grid in WebXR:
+        <input type="checkbox" v-model="grid" :disabled="!xr" />
+      </p>
+      <p>
+        Show Axis in WebXR:
+        <input type="checkbox" v-model="axis" :disabled="!xr" />
+      </p>
       <button @click="register">Register as Viewer</button>
       <button @click="cast" style="margin-left: 20px">
         Cast Screen to Viewer
@@ -54,6 +62,8 @@ const host = ref("0.peerjs.com");
 const port = ref(443);
 const path = ref("/");
 const xr = ref(false);
+const grid = ref(true);
+const axis = ref(false);
 
 const role = ref<"unknown" | "viewer" | "caster">("unknown");
 const streams = ref<MediaStream[]>([]);
@@ -64,7 +74,7 @@ const casting = ref(0);
 function register() {
   role.value = "viewer";
 
-  if (xr.value) initScene();
+  if (xr.value) initScene(grid.value, axis.value);
 
   const peer = new Peer(viewerName.value, {
     host: host.value,
@@ -128,6 +138,12 @@ onMounted(() => {
   }
   if (urlParams.has("xr")) {
     xr.value = urlParams.get("xr") == "true";
+  }
+  if (urlParams.has("grid")) {
+    grid.value = urlParams.get("grid") == "true";
+  }
+  if (urlParams.has("axis")) {
+    axis.value = urlParams.get("axis") == "true";
   }
   if (urlParams.has("role")) {
     const s = urlParams.get("role");

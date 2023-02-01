@@ -11,7 +11,7 @@ const screens = new three.Group();
 let holdScreen: three.Object3D<three.Event> | null = null;
 let squeezing = false;
 
-export function initScene() {
+export function initScene(grid: boolean, axis: boolean) {
   // Make a camera. note that far is set to 100, which is better for real-world sized environments
   const camera = new three.PerspectiveCamera(
     50,
@@ -23,8 +23,8 @@ export function initScene() {
   scene.add(camera);
 
   // helpers
-  scene.add(new three.GridHelper(500, 500));
-  scene.add(new three.AxesHelper(10));
+  if (grid) scene.add(new three.GridHelper(500, 500));
+  if (axis) scene.add(new three.AxesHelper(10));
 
   // Make a renderer that fills the screen
   const renderer = new three.WebGLRenderer({ antialias: true });
