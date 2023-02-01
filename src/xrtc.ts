@@ -9,8 +9,20 @@ type Screen = three.Mesh<
 >;
 const screens = new three.Group();
 let holdScreen: three.Object3D<three.Event> | null = null;
+let gamepad: Gamepad | null = null;
+let squeezing = false;
 
 export function initScene() {
+  // detect gamepad
+  window.addEventListener("gamepadconnected", (e) => {
+    gamepad = e.gamepad;
+    console.log("gamepad connected", gamepad);
+  });
+  window.addEventListener("gamepaddisconnected", (e) => {
+    gamepad = null;
+    console.log("gamepad disconnected", e.gamepad);
+  });
+
   // Make a camera. note that far is set to 100, which is better for real-world sized environments
   const camera = new three.PerspectiveCamera(
     50,
@@ -33,6 +45,33 @@ export function initScene() {
   renderer.xr.enabled = true;
   // Set animation loop
   renderer.setAnimationLoop(() => {
+    if (holdScreen !== null && gamepad !== null) {
+      // gamepad needs to be updated every frame
+      const [gp] = navigator.getGamepads();
+      // move/scale screen using left/right joystick-y
+      if (gp!.axes[1] > 0.1 || gp!.axes[3] > 0.1) {
+        const value = Math.max(gp!.axes[1], gp!.axes[3]);
+        if (squeezing) {
+          // scale
+          holdScreen.scale.x += value * 0.02;
+          holdScreen.scale.y += value * 0.02;
+        } else {
+          // move
+          holdScreen.position.z += value * 0.02;
+        }
+      } else if (gp!.axes[1] < -0.1 || gp!.axes[3] < -0.1) {
+        const value = Math.min(gp!.axes[1], gp!.axes[3]); // value is negative
+        if (squeezing) {
+          // scale
+          holdScreen.scale.x += value * 0.02;
+          holdScreen.scale.y += value * 0.02;
+        } else {
+          // move
+          holdScreen.position.z += value * 0.02;
+        }
+      }
+    }
+
     // Draw everything
     renderer.render(scene, camera);
   });
@@ -45,10 +84,14 @@ export function initScene() {
   const controller1 = renderer.xr.getController(0);
   controller1.addEventListener("selectstart", onSelectStart);
   controller1.addEventListener("selectend", onSelectEnd);
+  controller1.addEventListener("squeezestart", onSqueezeStart);
+  controller1.addEventListener("squeezeend", onSqueezeEnd);
   scene.add(controller1);
   const controller2 = renderer.xr.getController(1);
   controller2.addEventListener("selectstart", onSelectStart);
   controller2.addEventListener("selectend", onSelectEnd);
+  controller2.addEventListener("squeezestart", onSqueezeStart);
+  controller2.addEventListener("squeezeend", onSqueezeEnd);
   scene.add(controller2);
   const controllerModelFactory = new XRControllerModelFactory();
   const controllerGrip1 = renderer.xr.getControllerGrip(0);
@@ -133,7 +176,6 @@ const onSelectStart: three.EventListener<
     controller.attach(holdScreen);
   }
 };
-
 const onSelectEnd: three.EventListener<
   three.Event,
   "selectend",
@@ -145,6 +187,21 @@ const onSelectEnd: three.EventListener<
     screens.attach(holdScreen);
     holdScreen = null;
   }
+};
+
+const onSqueezeStart: three.EventListener<
+  three.Event,
+  "squeezestart",
+  three.XRTargetRaySpace
+> = (event) => {
+  squeezing = true;
+};
+const onSqueezeEnd: three.EventListener<
+  three.Event,
+  "squeezeend",
+  three.XRTargetRaySpace
+> = (event) => {
+  squeezing = false;
 };
 
 function getIntersections(controller: three.XRTargetRaySpace) {
