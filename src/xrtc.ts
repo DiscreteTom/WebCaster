@@ -10,15 +10,14 @@ type Screen = three.Mesh<
 const screens = new three.Group();
 let holdScreen: three.Object3D<three.Event> | null = null;
 let squeezing = false;
+const camera = new three.PerspectiveCamera(
+  50,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  100
+);
 
 export function initScene(grid: boolean, axis: boolean) {
-  // Make a camera. note that far is set to 100, which is better for real-world sized environments
-  const camera = new three.PerspectiveCamera(
-    50,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    100
-  );
   camera.position.set(0, 0, 0);
   scene.add(camera);
 
@@ -164,6 +163,11 @@ const onSelectStart: three.EventListener<
   if (intersections.length > 0) {
     const intersection = intersections[0];
     holdScreen = intersection.object;
+
+    // make the screen face to the camera
+    holdScreen.lookAt(camera.position);
+
+    // player can hold the screen
     controller.attach(holdScreen);
   }
 };
