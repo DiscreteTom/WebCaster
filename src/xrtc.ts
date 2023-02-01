@@ -144,9 +144,15 @@ export async function addVideo(video: HTMLVideoElement) {
   }
 
   // audio
-  const audio = new three.Audio(listener);
-  audio.setMediaStreamSource(video.srcObject as MediaStream);
-  screen.add(audio);
+  // first, check if the video has audio
+  if (
+    video.srcObject instanceof MediaStream &&
+    video.srcObject.getAudioTracks().length > 0
+  ) {
+    const audio = new three.Audio(listener);
+    audio.setMediaStreamSource(video.srcObject as MediaStream);
+    screen.add(audio);
+  }
 
   scene.add(screen);
   screens.attach(screen);
