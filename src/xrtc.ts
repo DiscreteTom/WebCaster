@@ -16,6 +16,8 @@ const camera = new three.PerspectiveCamera(
   0.1,
   100
 );
+const listener = new three.AudioListener();
+camera.add(listener);
 
 export function initScene(grid: boolean, axis: boolean) {
   camera.position.set(0, 0, 0);
@@ -140,6 +142,12 @@ export async function addVideo(video: HTMLVideoElement) {
       .sort()[screens.children.length - 1];
     screen.position.set(screenWidth / 2 + maxX, screenHeight / 2, -3);
   }
+
+  // audio
+  const audio = new three.Audio(listener);
+  audio.setMediaStreamSource(video.srcObject as MediaStream);
+  screen.add(audio);
+
   scene.add(screen);
   screens.attach(screen);
 }
