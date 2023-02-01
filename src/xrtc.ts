@@ -35,8 +35,8 @@ export function initScene(grid: boolean, axis: boolean) {
   // Set animation loop
   renderer.setAnimationLoop(() => {
     if (holdScreen !== null) {
-      const gp = controller1.userData.gamepad as Gamepad;
       // move/scale screen using left/right joystick-y
+      const gp = controller1.userData.gamepad as Gamepad;
       if (gp!.axes[1] > 0.1 || gp!.axes[3] > 0.1) {
         const value = Math.max(gp!.axes[1], gp!.axes[3]);
         if (squeezing) {
