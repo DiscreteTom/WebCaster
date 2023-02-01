@@ -108,18 +108,10 @@ export function initScene(grid: boolean, axis: boolean) {
   scene.add(screens);
 }
 
-function makeVideoMaterial(video: HTMLVideoElement) {
-  const videoTexture = new three.VideoTexture(video);
-
-  const videoMaterial = new three.MeshBasicMaterial({
-    map: videoTexture,
-  });
-
-  return videoMaterial;
-}
-
 export async function addVideo(video: HTMLVideoElement) {
-  const videoMaterial = makeVideoMaterial(video);
+  const videoMaterial = new three.MeshBasicMaterial({
+    map: new three.VideoTexture(video),
+  });
   const otherMat = new three.MeshNormalMaterial();
 
   // wait until the video is ready
