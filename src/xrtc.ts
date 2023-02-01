@@ -8,7 +8,7 @@ type Screen = three.Mesh<
   (three.MeshBasicMaterial | three.MeshNormalMaterial)[]
 >;
 const screens = new three.Group();
-let holdObject: three.Object3D<three.Event> | null = null;
+let holdScreen: three.Object3D<three.Event> | null = null;
 
 export function initScene() {
   // Make a camera. note that far is set to 100, which is better for real-world sized environments
@@ -129,8 +129,8 @@ const onSelectStart: three.EventListener<
   const intersections = getIntersections(controller);
   if (intersections.length > 0) {
     const intersection = intersections[0];
-    holdObject = intersection.object;
-    controller.attach(holdObject);
+    holdScreen = intersection.object;
+    controller.attach(holdScreen);
   }
 };
 
@@ -141,15 +141,9 @@ const onSelectEnd: three.EventListener<
 > = (event) => {
   // const controller = event.target as three.XRTargetRaySpace;
 
-  if (holdObject !== null) {
-    // holdObject.removeFromParent();
-    // holdObject.matrixWorld.decompose(
-    //   holdObject.position,
-    //   holdObject.quaternion,
-    //   holdObject.scale
-    // );
-    screens.attach(holdObject);
-    holdObject = null;
+  if (holdScreen !== null) {
+    screens.attach(holdScreen);
+    holdScreen = null;
   }
 };
 
