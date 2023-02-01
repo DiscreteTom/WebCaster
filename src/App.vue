@@ -39,6 +39,9 @@
       <button @click="cast" style="margin-left: 20px">
         Cast Screen to Viewer
       </button>
+      <button @click="save" style="margin-left: 20px">
+        Save Config to URL
+      </button>
     </div>
 
     <div v-show="role == 'viewer'">
@@ -126,6 +129,19 @@ function cast() {
       peer.call(viewerName.value, stream);
       casting.value++;
     });
+}
+
+function save() {
+  const params = new URLSearchParams();
+  params.set("viewer-name", viewerName.value);
+  params.set("host", host.value);
+  params.set("port", port.value.toString());
+  params.set("path", path.value);
+  params.set("audio", audio.value.toString());
+  params.set("xr", xr.value.toString());
+  params.set("grid", grid.value.toString());
+  params.set("axis", axis.value.toString());
+  window.location.search = params.toString();
 }
 
 onMounted(() => {
