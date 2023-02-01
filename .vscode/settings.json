@@ -3,6 +3,8 @@
     "peerjs",
     "Raycaster",
     "selectend",
+    "squeezeend",
+    "squeezestart",
     "threejs",
     "webrtc",
     "webxr",
