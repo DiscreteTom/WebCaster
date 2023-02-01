@@ -9,20 +9,9 @@ type Screen = three.Mesh<
 >;
 const screens = new three.Group();
 let holdScreen: three.Object3D<three.Event> | null = null;
-let gamepad: Gamepad | null = null;
 let squeezing = false;
 
 export function initScene() {
-  // detect gamepad
-  window.addEventListener("gamepadconnected", (e) => {
-    gamepad = e.gamepad;
-    console.log("gamepad connected", gamepad);
-  });
-  window.addEventListener("gamepaddisconnected", (e) => {
-    gamepad = null;
-    console.log("gamepad disconnected", e.gamepad);
-  });
-
   // Make a camera. note that far is set to 100, which is better for real-world sized environments
   const camera = new three.PerspectiveCamera(
     50,
@@ -45,9 +34,8 @@ export function initScene() {
   renderer.xr.enabled = true;
   // Set animation loop
   renderer.setAnimationLoop(() => {
-    if (holdScreen !== null && gamepad !== null) {
-      // gamepad needs to be updated every frame
-      const [gp] = navigator.getGamepads();
+    if (holdScreen !== null) {
+      const gp = controller1.userData.gamepad as Gamepad;
       // move/scale screen using left/right joystick-y
       if (gp!.axes[1] > 0.1 || gp!.axes[3] > 0.1) {
         const value = Math.max(gp!.axes[1], gp!.axes[3]);
@@ -82,6 +70,9 @@ export function initScene() {
 
   // controllers
   const controller1 = renderer.xr.getController(0);
+  controller1.addEventListener("connected", (e) => {
+    controller1.userData.gamepad = e.data.gamepad;
+  });
   controller1.addEventListener("selectstart", onSelectStart);
   controller1.addEventListener("selectend", onSelectEnd);
   controller1.addEventListener("squeezestart", onSqueezeStart);
