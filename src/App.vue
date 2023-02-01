@@ -20,6 +20,10 @@
         <input v-model="path" />
       </p>
       <p>
+        Cast with Audio:
+        <input type="checkbox" v-model="audio" />
+      </p>
+      <p>
         View with WebXR:
         <input type="checkbox" v-model="xr" :disabled="role == 'caster'" />
       </p>
@@ -61,6 +65,7 @@ const viewerName = ref("viewer");
 const host = ref("0.peerjs.com");
 const port = ref(443);
 const path = ref("/");
+const audio = ref(true);
 const xr = ref(false);
 const grid = ref(true);
 const axis = ref(false);
@@ -115,10 +120,12 @@ function cast() {
     console.error(err);
     errMsg.value = err.message;
   });
-  navigator.mediaDevices.getDisplayMedia().then((stream) => {
-    peer.call(viewerName.value, stream);
-    casting.value++;
-  });
+  navigator.mediaDevices
+    .getDisplayMedia({ video: true, audio: audio.value })
+    .then((stream) => {
+      peer.call(viewerName.value, stream);
+      casting.value++;
+    });
 }
 
 onMounted(() => {
@@ -135,6 +142,9 @@ onMounted(() => {
   }
   if (urlParams.has("path")) {
     path.value = urlParams.get("path")!;
+  }
+  if (urlParams.has("audio")) {
+    audio.value = urlParams.get("audio") === "true";
   }
   if (urlParams.has("xr")) {
     xr.value = urlParams.get("xr") == "true";
