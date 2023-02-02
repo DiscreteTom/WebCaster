@@ -8,6 +8,8 @@ Cast your PC screen to any browser, with WebXR support!
 
 GitHub Pages: https://discretetom.github.io/WebCaster
 
+> **Warning**: You may need to change the `Viewer Name` to some random string first to avoid conflicts.
+
 ## XR User Guide
 
 - Press trigger to select and drag a window.
