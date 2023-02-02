@@ -29,11 +29,19 @@
       </p>
       <p>
         Show Grid in WebXR:
-        <input type="checkbox" v-model="grid" :disabled="!xr" />
+        <input
+          type="checkbox"
+          v-model="grid"
+          :disabled="!xr || role == 'caster'"
+        />
       </p>
       <p>
         Show Axis in WebXR:
-        <input type="checkbox" v-model="axis" :disabled="!xr" />
+        <input
+          type="checkbox"
+          v-model="axis"
+          :disabled="!xr || role == 'caster'"
+        />
       </p>
       <button @click="register">Register as Viewer</button>
       <button @click="cast" style="margin-left: 20px">
