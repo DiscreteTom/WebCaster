@@ -6,6 +6,12 @@
       <p>
         Viewer Name:
         <input v-model="viewerName" />
+        <span
+          style="font-weight: bold; color: red"
+          v-if="viewerName == 'viewer'"
+        >
+          &lt;= Use a random name to avoid conflicts.
+        </span>
       </p>
       <p>
         Peer Server Host:
