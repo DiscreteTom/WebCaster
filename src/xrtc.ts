@@ -119,9 +119,8 @@ export async function addVideo(video: HTMLVideoElement) {
   }
   console.log(`video size: ${video.videoWidth}x${video.videoHeight}`);
 
-  const videoMaterial = new three.MeshBasicMaterial({
-    map: new three.VideoTexture(video),
-  });
+  const videoTexture = new three.VideoTexture(video);
+  const videoMaterial = new three.MeshBasicMaterial({ map: videoTexture });
   const otherMat = new three.MeshNormalMaterial();
 
   const screenWidth = video.videoWidth / 500;
