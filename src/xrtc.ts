@@ -111,19 +111,18 @@ export function initScene(grid: boolean, axis: boolean) {
 }
 
 export async function addVideo(video: HTMLVideoElement) {
-  const videoMaterial = new three.MeshBasicMaterial({
-    map: new three.VideoTexture(video),
-  });
-  const otherMat = new three.MeshNormalMaterial();
-
   // wait until the video is ready
   if (video.videoWidth === 0 && video.videoHeight === 0) {
     await new Promise<void>((resolve) => {
       video.addEventListener("loadedmetadata", () => resolve(), false);
     });
   }
+  console.log(`video size: ${video.videoWidth}x${video.videoHeight}`);
 
-  console.log(video.videoWidth, video.videoHeight);
+  const videoMaterial = new three.MeshBasicMaterial({
+    map: new three.VideoTexture(video),
+  });
+  const otherMat = new three.MeshNormalMaterial();
 
   const screenWidth = video.videoWidth / 500;
   const screenHeight = video.videoHeight / 500;
