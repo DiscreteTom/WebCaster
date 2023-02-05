@@ -76,7 +76,7 @@
 <script setup lang="ts">
 import { Peer } from "peerjs";
 import { onMounted, ref } from "vue";
-import { initScene, addVideo } from "./xrtc";
+import { initScene, addVideo } from "./xr";
 
 const viewerName = ref("viewer");
 const host = ref("0.peerjs.com");
